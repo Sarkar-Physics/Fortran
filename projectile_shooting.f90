@@ -1,7 +1,7 @@
 program projectile_shooting
 real::x,y,xf,t,h,pi,theta_initial,theta_final,theta_mid
 pi=acos(-1.0)
-theta_initial=10.0*pi/180.0;theta_final=60.0*pi/180.0
+theta_initial=10.0*pi/180.0;theta_final=30.0*pi/180.0
 x=0.0;y=0.0;xf=16769.0;t=0.0;h=0.01
 call shooting(x,y,t,h,theta_initial,theta_final,theta_mid)
 print*,"Required angle(in degree):",theta_mid*180.0/pi
@@ -63,20 +63,21 @@ subroutine shooting(x0,y0,t0,step,initial_parameter,final_parameter,theta_mid)
     theta1=initial_parameter
     theta2=final_parameter
     theta_mid=theta1
-    do i=0,100
+    do i=0,50
         x=x0;y=y0;t=t0;h=step
         xf=16769.0
-        vx=650.0*cos(theta_mid);vy=650.0*cos(theta_mid)
+        vx=650.0*cos(theta_mid);vy=650.0*sin(theta_mid)
         do while (y>=0.0)
             call rk4(x,y,vx,vy,t,h)
         end do
-        if(x-xf>0) then
-            theta1=theta_mid
-        else
+        if(x>xf) then
             theta2=theta_mid
-        end if
+        elseif(x-xf<0) then
+            theta1=theta_mid
+         end if
         theta_mid=(theta1+theta2)/2.0
-        if (abs(x-xf)<=0.001) then
+        print*,x,theta_mid*180/3.14
+        if (abs(x-xf)<=0.1) then
             exit
         end if
     end do
